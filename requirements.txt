@@ -1,0 +1,4 @@
+numba==0.60.0
+numpy==2.2.4
+opencv_contrib_python==4.9.0.80
+pytest==8.3.5
