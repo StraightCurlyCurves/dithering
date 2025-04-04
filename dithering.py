@@ -1,4 +1,3 @@
-import time
 import os
 import zlib
 
@@ -12,11 +11,8 @@ class Dither:
         '''
         Initialize Dither object.
 
-        Keyword arguments:
-        image (np.ndarray): Image to dither. Default is None.
+        Parameters:
         palette (np.ndarray): Color palette. Default is None.
-        dithered_image (np.ndarray): Dithered image. Default is None.
-        index_image (np.ndarray): Index image. Default is None.
         '''
         self._palette: np.ndarray = None
         self._dithered_image: np.ndarray = None
@@ -278,43 +274,3 @@ class Dither:
                         if x + 1 < width:
                             dithered_image[y + 1, x + 1] += quant_error * 1 / 16
         return dithered_image.astype(np.uint8)
-
-if __name__ == '__main__':
-    image = cv.imread('test_img.png')
-    assert image is not None, "Image not found or unable to read."
-
-    new_filename = 'index_image.dim.png' # .png ending helps the OS to see the png file at the beginning of the file
-
-    dither = Dither()
-    print('Dithering...')
-    tick = time.perf_counter()
-    dither.dither(image)
-    tock = time.perf_counter()
-    print(f'Dithering time: {tock - tick:.3f} s')
-    cv.imshow('Dithered Image', dither.get_dithered_image())
-    key = cv.waitKey(0)
-    cv.destroyAllWindows()
-
-    tick = time.perf_counter()
-    dither.to_index()
-    tock = time.perf_counter()
-    print(f'To index time: {tock - tick:.3f} s')
-
-    thumbnail = cv.resize(image, (image.shape[1] // 10, image.shape[0] // 10))
-    tick = time.perf_counter()
-    dither.save_index_image(new_filename, thumbnail=thumbnail)
-    tock = time.perf_counter()
-    print(f'Save index image time: {tock - tick:.3f} s')
-
-    tick = time.perf_counter()
-    dither.load_index_image(new_filename)
-    tock = time.perf_counter()
-    print(f'Load index image time: {tock - tick:.3f} s')
-    
-    tick = time.perf_counter()
-    dither.from_index()
-    tock = time.perf_counter()
-    print(f'From index time: {tock - tick:.3f} s')
-    cv.imshow('Dithered Image', dither.get_dithered_image())
-    key = cv.waitKey(0)
-    cv.destroyAllWindows()
